@@ -1,90 +1,90 @@
-# Statut — Connecteur Shopify / Dynamics
+# Status — Shopify / Dynamics connector
 
-*Dernière mise à jour : juin 2026 — boutique `fanshopaperol.myshopify.com` (Aperol Official Online Shop)*
+*Last updated: June 2026 — store `fanshopaperol.myshopify.com` (Aperol Official Online Shop)*
 
 ---
 
-## Le token 24h règle-t-il le problème ?
+## Does the 24h token fix the problem?
 
-**Non — ce sont deux sujets distincts.**
+**No — these are two separate issues.**
 
-| Sujet | Nature | Statut |
+| Topic | Nature | Status |
 |-------|--------|--------|
-| **Scopes Admin API manquants** | Cause des erreurs `ACCESS_DENIED` | ✅ **Résolu** |
-| **Expiration du token (~24h)** | Contrainte du flux `client_credentials` | ⚠️ **À gérer en exploitation** |
+| **Missing Admin API scopes** | Cause of `ACCESS_DENIED` errors | ✅ **Resolved** |
+| **Token expiry (~24h)** | `client_credentials` flow constraint | ⚠️ **Ongoing operations** |
 
-### Ce qui a corrigé les erreurs
+### What actually fixed the errors
 
-1. Ajout des scopes **Admin API** (pas Customer Account API) :
+1. Added **Admin API** scopes (not Customer Account API):
    - `read_orders`, `read_products`, `read_customers`, `write_customers`, `read_locations`, `read_inventory`
-2. Réinstallation de l'app + nouveau token avec ces permissions
-3. Tests locaux validés (**5/5**)
+2. Reinstalled the app + new token with those permissions
+3. Local tests validated (**5/5**)
 
-Une fois le token propagé dans Dynamics, les erreurs de scopes ne devraient plus apparaître — tant que le token en cours est valide.
+Once the token is propagated in Dynamics, scope errors should no longer appear — as long as the active token is valid.
 
-### Le sujet des 24h
+### The 24h topic
 
-Le `shpat_` obtenu via `client_credentials` **expire après ~24h**. Ce n'est pas la cause initiale des `ACCESS_DENIED`, mais peut provoquer de nouvelles pannes si Dynamics utilise un token expiré.
+The `shpat_` obtained via `client_credentials` **expires after ~24h**. This was not the initial cause of `ACCESS_DENIED`, but can cause new failures if Dynamics uses an expired token.
 
-**Options :**
+**Options:**
 
-1. **Court terme** — Régénérer le token (`scripts/renew-token.sh`) et mettre à jour les connexions Dynamics
-2. **Moyen terme** — Flow Power Automate planifié (si faisable dans le tenant)
-3. **Long terme** — Évaluer OAuth complet côté connecteur
+1. **Short term** — Regenerate the token (`scripts/renew-token.sh`) and update Dynamics connections
+2. **Medium term** — Scheduled Power Automate flow (if feasible in the tenant)
+3. **Long term** — Evaluate full OAuth on the connector side
 
 ---
 
-## Ce qui a été fait
+## Completed
 
-- [x] Analyse des logs d'erreur initiaux (`errors/`)
-- [x] Cause racine : scopes **Admin API** absents (confusion avec `customer_read_*`)
-- [x] Documentation `read_marketplace_orders` (ignorable — `read_orders` suffit)
-- [x] Scripts token + validation scopes (`scripts/`)
-- [x] Configuration scopes sur la custom app Shopify
-- [x] Validation API : orders, products, locations, customers
+- [x] Analysis of initial error logs (`errors/`)
+- [x] Root cause: missing **Admin API** scopes (confusion with `customer_read_*`)
+- [x] Documented `read_marketplace_orders` (ignorable — `read_orders` is enough)
+- [x] Token + scope validation scripts (`scripts/`)
+- [x] Scope configuration on the Shopify custom app
+- [x] API validation: orders, products, locations, customers
 
-### Résultat des tests
+### Test results
 
-| Test | Résultat |
-|------|----------|
-| Scopes accordés | ✅ |
+| Test | Result |
+|------|--------|
+| Granted scopes | ✅ |
 | `orders` | ✅ |
 | `products` | ✅ |
 | `locations` | ✅ |
-| `customers` (champs connecteur) | ✅ |
+| `customers` (connector fields) | ✅ |
 
 ---
 
-## Ce qu'il reste à faire
+## Remaining actions
 
-### Côté Dynamics / Power Platform
+### Dynamics / Power Platform side
 
-- [ ] Configurer `scripts/.env` avec les credentials fournis et valider via `renew-token.sh`
-- [ ] Mettre à jour le `shpat_` dans toutes les connexions concernées
+- [ ] Configure `scripts/.env` with provided credentials and validate via `renew-token.sh`
+- [ ] Update `shpat_` in all relevant connections
   - Power Apps → Connections
   - Power Automate → Connections
-  - Dataverse → connection references (tables virtuelles)
-  - Variables d'environnement / Key Vault si utilisées
-- [ ] Retester les tables `customers`, `orders`, `products`, `locations`
-- [ ] Confirmer que l'intégration fonctionne de bout en bout
+  - Dataverse → connection references (virtual tables)
+  - Environment variables / Key Vault if used
+- [ ] Retest tables `customers`, `orders`, `products`, `locations`
+- [ ] Confirm end-to-end integration works
 
-→ Procédure : [docs/DYNAMICS-GUIDE.md](DYNAMICS-GUIDE.md)
+→ Procedure: [docs/DYNAMICS-GUIDE.md](DYNAMICS-GUIDE.md)
 
-### Exploitation
+### Operations
 
-- [x] Guides documentés (`TOKEN-RENEWAL-GUIDE.md`, `DYNAMICS-GUIDE.md`)
-- [ ] Transmettre credentials + scripts (pas le token par email) ; cadence de renouvellement ~24h
+- [x] Guides documented (`TOKEN-RENEWAL-GUIDE.md`, `DYNAMICS-GUIDE.md`)
+- [ ] Share credentials + scripts (not the token by email); ~24h renewal cadence
 
-### Optionnel
+### Optional
 
-- [ ] Distinguer cette custom app de l'app **Business Central** officielle (OAuth séparé)
-- [ ] Centraliser le token dans **Azure Key Vault**
+- [ ] Keep this custom app separate from the official **Business Central** app (separate OAuth)
+- [ ] Centralize the token in **Azure Key Vault**
 
 ---
 
-## Scopes Admin API (référence)
+## Admin API scopes (reference)
 
-**Shopify Admin → Développer des apps → [App Dynamics] → Admin API integration** :
+**Shopify Admin → Develop apps → [Dynamics app] → Admin API integration**:
 
 ```
 read_customers
@@ -95,7 +95,7 @@ read_locations
 read_inventory
 ```
 
-> Ne pas confondre avec les scopes **Customer Account API** (`customer_read_*`).
+> Do not confuse with **Customer Account API** scopes (`customer_read_*`).
 
 ---
 
@@ -107,4 +107,4 @@ read_inventory
 ./scripts/test-scopes.sh
 ```
 
-Configuration : `scripts/.env` (ne pas committer).
+Configuration: `scripts/.env` (do not commit).

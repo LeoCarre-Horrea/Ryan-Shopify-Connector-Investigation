@@ -62,7 +62,7 @@ This script:
 2. Tests shop access
 3. Runs 5 GraphQL checks (orders, products, locations, customers)
 
-**Expected result:** `5 réussis, 0 échoués` / all scope checks passed.
+**Expected result:** `5 passed, 0 failed` / all scope checks passed.
 
 Other commands:
 

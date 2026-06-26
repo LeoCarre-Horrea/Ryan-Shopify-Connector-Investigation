@@ -1,20 +1,20 @@
-# Connecteur Shopify / Dynamics 365
+# Shopify / Dynamics 365 connector
 
-Investigation et résolution des erreurs `ACCESS_DENIED` sur les tables Dataverse **customers**, **orders**, **products** et **locations**.
+Investigation and resolution of `ACCESS_DENIED` errors on Dataverse tables **customers**, **orders**, **products**, and **locations**.
 
 ## Structure
 
 ```
 ├── README.md
 ├── docs/
-│   ├── STATUS.md                 ← bilan et suite à faire
-│   ├── DYNAMICS-GUIDE.md         ← connexions Power Platform / retest
-│   └── TOKEN-RENEWAL-GUIDE.md    ← renouvellement token (Shopify + Dynamics)
-├── errors/                       ← logs d'erreur initiaux du connecteur
+│   ├── STATUS.md                 ← summary and remaining actions
+│   ├── DYNAMICS-GUIDE.md         ← Power Platform connections / retest
+│   └── TOKEN-RENEWAL-GUIDE.md    ← token renewal (Shopify + Dynamics)
+├── errors/                       ← initial connector error logs
 │   ├── customers.txt
 │   ├── orders.txt
 │   └── products.txt
-└── scripts/                      ← génération et validation token Shopify
+└── scripts/                      ← Shopify token generation and validation
     ├── README.md
     ├── renew-token.sh
     ├── get-shopify-token.sh
@@ -24,20 +24,20 @@ Investigation et résolution des erreurs `ACCESS_DENIED` sur les tables Datavers
 
 ## Documentation
 
-| Document | Contenu |
-|----------|---------|
-| [docs/STATUS.md](docs/STATUS.md) | Bilan investigation, statut, actions restantes |
-| [docs/DYNAMICS-GUIDE.md](docs/DYNAMICS-GUIDE.md) | Mise à jour des connexions Dynamics + retest |
-| [docs/TOKEN-RENEWAL-GUIDE.md](docs/TOKEN-RENEWAL-GUIDE.md) | Renouvellement token — Part 1 Shopify / Part 2 Dynamics |
-| [scripts/README.md](scripts/README.md) | Scripts côté Shopify (Part 1) |
+| Document | Contents |
+|----------|----------|
+| [docs/STATUS.md](docs/STATUS.md) | Investigation summary, status, remaining actions |
+| [docs/DYNAMICS-GUIDE.md](docs/DYNAMICS-GUIDE.md) | Updating Dynamics connections + retest |
+| [docs/TOKEN-RENEWAL-GUIDE.md](docs/TOKEN-RENEWAL-GUIDE.md) | Token renewal — Part 1 Shopify / Part 2 Dynamics |
+| [scripts/README.md](scripts/README.md) | Shopify scripts (Part 1) |
 
-## Répartition
+## Responsibilities
 
-| Périmètre | Responsabilité |
-|-----------|----------------|
-| **Shopify** | Scopes custom app, génération `shpat_`, validation API (`scripts/`) |
-| **Dynamics** | Mise à jour connexions Power Platform, retest tables virtuelles |
+| Area | Responsibility |
+|------|----------------|
+| **Shopify** | Custom app scopes, `shpat_` generation, API validation (`scripts/`) |
+| **Dynamics** | Power Platform connection updates, virtual table retest |
 
-## État actuel
+## Current status
 
-Scopes Admin API corrigés, tests locaux **5/5 OK**. Voir [docs/STATUS.md](docs/STATUS.md).
+Admin API scopes fixed, local tests **5/5 OK**. See [docs/STATUS.md](docs/STATUS.md).

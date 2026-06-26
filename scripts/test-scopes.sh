@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Diagnostic Shopify — valide les scopes requis par le connecteur Dynamics / Power Platform
+# Shopify diagnostic — validates scopes required by the Dynamics / Power Platform connector
 #
-# Prérequis : scripts/.env configuré (voir README.md)
+# Prerequisites: scripts/.env configured (see README.md)
 #   ./scripts/get-shopify-token.sh --test
 #   ./scripts/test-scopes.sh
 
@@ -20,7 +20,7 @@ CLIENT_SECRET="${SHOPIFY_CLIENT_SECRET:-}"
 API_VERSION="${SHOPIFY_API_VERSION:-2026-01}"
 
 if [[ -z "$STORE" ]]; then
-  echo "Erreur: définissez SHOPIFY_STORE (dans scripts/.env ou en export)"
+  echo "Error: set SHOPIFY_STORE (in scripts/.env or via export)"
   exit 1
 fi
 
@@ -28,14 +28,14 @@ STORE="$(normalize_shopify_store "$STORE")"
 
 if [[ -z "$TOKEN" ]]; then
   if [[ -n "$CLIENT_ID" && -n "$CLIENT_SECRET" ]]; then
-    echo "Pas de SHOPIFY_ACCESS_TOKEN — récupération via client_credentials..."
+    echo "No SHOPIFY_ACCESS_TOKEN — fetching via client_credentials..."
     TOKEN_RESPONSE=$(fetch_shopify_access_token "$STORE" "$CLIENT_ID" "$CLIENT_SECRET") || exit 1
     TOKEN=$(echo "$TOKEN_RESPONSE" | python3 -c 'import json,sys; print(json.load(sys.stdin)["access_token"])')
-    echo "Token obtenu."
+    echo "Token obtained."
     echo ""
   else
-    echo "Erreur: lancez d'abord ./scripts/get-shopify-token.sh"
-    echo "  ou définissez SHOPIFY_ACCESS_TOKEN / SHOPIFY_CLIENT_ID + SHOPIFY_CLIENT_SECRET"
+    echo "Error: run ./scripts/get-shopify-token.sh first"
+    echo "  or set SHOPIFY_ACCESS_TOKEN / SHOPIFY_CLIENT_ID + SHOPIFY_CLIENT_SECRET"
     exit 1
   fi
 fi
@@ -58,10 +58,10 @@ run_query() {
   echo "$response" | python3 -m json.tool 2>/dev/null || echo "$response"
 
   if echo "$response" | grep -q '"ACCESS_DENIED"'; then
-    echo "❌ ÉCHEC — scope manquant (voir errors ci-dessus)"
+    echo "❌ FAILED — missing scope (see errors above)"
     return 1
   elif echo "$response" | grep -q '"errors"'; then
-    echo "⚠️  Erreur GraphQL (voir ci-dessus)"
+    echo "⚠️  GraphQL error (see above)"
     return 1
   else
     echo "✅ OK"
@@ -76,7 +76,7 @@ check() {
   if run_query "$@"; then PASS=$((PASS + 1)); else FAIL=$((FAIL + 1)); fi
 }
 
-check "Scopes accordés à l'app" \
+check "Granted app scopes" \
 'query { appInstallation { accessScopes { handle } } }'
 
 check "Orders (read_orders)" \
@@ -88,12 +88,12 @@ check "Products (read_products)" \
 check "Locations (read_locations)" \
 'query { locations(first: 1) { edges { node { id name } } } }'
 
-check "Customers — champs problématiques du connecteur" \
+check "Customers — connector fields" \
 'query { customers(first: 1) { edges { node { id displayName defaultEmailAddress { emailAddress marketingUnsubscribeUrl } lastOrder { id name } } } } }'
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "Résumé: $PASS réussis, $FAIL échoués"
+echo "Summary: $PASS passed, $FAIL failed"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 if [[ $FAIL -gt 0 ]]; then

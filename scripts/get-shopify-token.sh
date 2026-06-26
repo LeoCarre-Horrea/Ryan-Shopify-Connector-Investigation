@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
-# Récupère un Admin API access token (shpat_) pour une custom app Shopify
+# Fetch an Admin API access token (shpat_) for a Shopify custom app
 #
-# Depuis 2026, l'installation de l'app ne montre plus toujours "Reveal token once".
-# On utilise le flux client_credentials : Client ID + shpss_ → shpat_ (valide 24h).
+# Since 2026, app install no longer always shows "Reveal token once".
+# Uses client_credentials flow: Client ID + shpss_ → shpat_ (valid ~24h).
 #
-# Usage :
-#   1. Copier scripts/.env.example → scripts/.env et remplir les valeurs
+# Usage:
+#   1. Copy scripts/.env.example → scripts/.env and fill in values
 #   2. ./scripts/get-shopify-token.sh
 #
-# Options :
-#   --test       Valide le token avec une requête GraphQL shop { name }
-#   --export     Affiche les commandes export pour la session courante
-#   --json       Sortie JSON brute de Shopify
+# Options:
+#   --test       Validate token with a GraphQL shop { name } query
+#   --export     Print export commands for the current shell session
+#   --json       Raw JSON output from Shopify
 
 set -euo pipefail
 
@@ -40,29 +40,29 @@ for arg in "$@"; do
       exit 0
       ;;
     *)
-      echo "Option inconnue: $arg (utilisez --help)" >&2
+      echo "Unknown option: $arg (use --help)" >&2
       exit 1
       ;;
   esac
 done
 
 if [[ -z "$STORE" || -z "$CLIENT_ID" || -z "$CLIENT_SECRET" ]]; then
-  echo "Configuration manquante."
+  echo "Missing configuration."
   echo ""
-  echo "Créez scripts/.env à partir de scripts/.env.example :"
+  echo "Create scripts/.env from scripts/.env.example:"
   echo "  cp scripts/.env.example scripts/.env"
   echo ""
-  echo "Puis renseignez :"
+  echo "Then set:"
   echo "  SHOPIFY_STORE         → fanshopaperol.myshopify.com"
-  echo "  SHOPIFY_CLIENT_ID     → depuis l'app (Dev Dashboard ou Admin)"
+  echo "  SHOPIFY_CLIENT_ID     → from app (Dev Dashboard or Admin)"
   echo "  SHOPIFY_CLIENT_SECRET → shpss_..."
   exit 1
 fi
 
 STORE="$(normalize_shopify_store "$STORE")"
 
-echo "Boutique : ${STORE}"
-echo "Échange Client ID + shpss_ contre un access token..."
+echo "Store: ${STORE}"
+echo "Exchanging Client ID + shpss_ for an access token..."
 echo ""
 
 TOKEN_RESPONSE=$(fetch_shopify_access_token "$STORE" "$CLIENT_ID" "$CLIENT_SECRET") || exit 1
@@ -77,27 +77,27 @@ SCOPES=$(echo "$TOKEN_RESPONSE" | python3 -c 'import json,sys; print(json.load(s
 EXPIRES_IN=$(echo "$TOKEN_RESPONSE" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("expires_in",""))')
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "Access token (shpat_) — valide ~24h"
+echo "Access token (shpat_) — valid ~24h"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 echo "$ACCESS_TOKEN"
 echo ""
-echo "Scopes accordés : ${SCOPES}"
-echo "Expire dans     : ${EXPIRES_IN} secondes (~$(( EXPIRES_IN / 3600 ))h)"
+echo "Granted scopes : ${SCOPES}"
+echo "Expires in     : ${EXPIRES_IN} seconds (~$(( EXPIRES_IN / 3600 ))h)"
 echo ""
-echo "→ Collez ce token dans les connexions Dynamics / Power Platform"
-echo "  (API Key ou header X-Shopify-Access-Token)"
+echo "→ Paste this token into Dynamics / Power Platform connections"
+echo "  (API Key or X-Shopify-Access-Token header)"
 echo ""
 
 if $DO_EXPORT; then
-  echo "# Commandes pour réutiliser ce token dans la session :"
+  echo "# Commands to reuse this token in the current session:"
   echo "export SHOPIFY_STORE=\"${STORE}\""
   echo "export SHOPIFY_ACCESS_TOKEN=\"${ACCESS_TOKEN}\""
   echo ""
 fi
 
 if $DO_TEST; then
-  echo "Test GraphQL (shop { name })..."
+  echo "GraphQL test (shop { name })..."
   TEST_RESPONSE=$(curl -sS -X POST "https://${STORE}/admin/api/${API_VERSION}/graphql.json" \
     -H "Content-Type: application/json" \
     -H "X-Shopify-Access-Token: ${ACCESS_TOKEN}" \
@@ -107,9 +107,9 @@ if $DO_TEST; then
 
   if echo "$TEST_RESPONSE" | grep -q '"errors"'; then
     echo ""
-    echo "⚠️  Le token a été obtenu mais la requête de test a échoué."
+    echo "⚠️  Token obtained but the test query failed."
     exit 1
   fi
   echo ""
-  echo "✅ Token valide — boutique accessible."
+  echo "✅ Valid token — store accessible."
 fi

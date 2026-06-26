@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fonctions partagées — authentification Shopify custom app (client credentials)
+# Shared helpers — Shopify custom app authentication (client credentials)
 
 normalize_shopify_store() {
   local store="$1"
@@ -30,7 +30,7 @@ fetch_shopify_access_token() {
   local client_secret="$3"
 
   if [[ -z "$store" || -z "$client_id" || -z "$client_secret" ]]; then
-    echo "Erreur: SHOPIFY_STORE, SHOPIFY_CLIENT_ID et SHOPIFY_CLIENT_SECRET sont requis." >&2
+    echo "Error: SHOPIFY_STORE, SHOPIFY_CLIENT_ID and SHOPIFY_CLIENT_SECRET are required." >&2
     return 1
   fi
 
@@ -45,7 +45,7 @@ fetch_shopify_access_token() {
   body="${response%$'\n'*}"
 
   if [[ "$http_code" != "200" ]]; then
-    echo "Erreur HTTP ${http_code} lors de l'obtention du token:" >&2
+    echo "HTTP error ${http_code} while fetching token:" >&2
     echo "$body" | python3 -m json.tool 2>/dev/null || echo "$body" >&2
     return 1
   fi
