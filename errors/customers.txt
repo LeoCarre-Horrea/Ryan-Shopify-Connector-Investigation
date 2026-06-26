@@ -1,0 +1,90 @@
+Failed to read from the source connector. Error code: 'InternalError', message: 'Error while reading single record for table: [customers] is [[
+  {
+    "message": "Access denied for marketingUnsubscribeUrl field. Required access: `write_customers` access scope. Also: User needs create_and_edit_customers permission.",
+    "locations": [
+      {
+        "line": 97,
+        "column": 1
+      }
+    ],
+    "extensions": {
+      "code": "ACCESS_DENIED",
+      "documentation": "https://shopify.dev/api/usage/access-scopes",
+      "requiredAccess": "`write_customers` access scope. Also: User needs create_and_edit_customers permission."
+    },
+    "path": [
+      "customers",
+      "edges",
+      0,
+      "node",
+      "defaultEmailAddress",
+      "marketingUnsubscribeUrl"
+    ]
+  },
+  {
+    "message": "Access denied for lastOrder field. Required access: `read_orders` access scope, `read_marketplace_orders` access scope or `read_quick_sale` access scope.",
+    "locations": [
+      {
+        "line": 111,
+        "column": 1
+      }
+    ],
+    "extensions": {
+      "code": "ACCESS_DENIED",
+      "documentation": "https://shopify.dev/api/usage/access-scopes",
+      "requiredAccess": "`read_orders` access scope, `read_marketplace_orders` access scope or `read_quick_sale` access scope."
+    },
+    "path": [
+      "customers",
+      "edges",
+      0,
+      "node",
+      "lastOrder"
+    ]
+  }
+]], ErrorCode: InternalError'
+Error while reading single record for table: [customers] is [[
+  {
+    "message": "Access denied for marketingUnsubscribeUrl field. Required access: `write_customers` access scope. Also: User needs create_and_edit_customers permission.",
+    "locations": [
+      {
+        "line": 97,
+        "column": 1
+      }
+    ],
+    "extensions": {
+      "code": "ACCESS_DENIED",
+      "documentation": "https://shopify.dev/api/usage/access-scopes",
+      "requiredAccess": "`write_customers` access scope. Also: User needs create_and_edit_customers permission."
+    },
+    "path": [
+      "customers",
+      "edges",
+      0,
+      "node",
+      "defaultEmailAddress",
+      "marketingUnsubscribeUrl"
+    ]
+  },
+  {
+    "message": "Access denied for lastOrder field. Required access: `read_orders` access scope, `read_marketplace_orders` access scope or `read_quick_sale` access scope.",
+    "locations": [
+      {
+        "line": 111,
+        "column": 1
+      }
+    ],
+    "extensions": {
+      "code": "ACCESS_DENIED",
+      "documentation": "https://shopify.dev/api/usage/access-scopes",
+      "requiredAccess": "`read_orders` access scope, `read_marketplace_orders` access scope or `read_quick_sale` access scope."
+    },
+    "path": [
+      "customers",
+      "edges",
+      0,
+      "node",
+      "lastOrder"
+    ]
+  }
+]], ErrorCode: InternalError

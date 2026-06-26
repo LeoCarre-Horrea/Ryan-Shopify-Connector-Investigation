@@ -1,0 +1,36 @@
+Failed to read from the source connector. Error code: 'InternalError', message: 'Error while reading single record for table: [products] is [[
+  {
+    "message": "Access denied for products field.",
+    "locations": [
+      {
+        "line": 5,
+        "column": 35
+      }
+    ],
+    "extensions": {
+      "code": "ACCESS_DENIED",
+      "documentation": "https://shopify.dev/api/usage/access-scopes"
+    },
+    "path": [
+      "products"
+    ]
+  }
+]], ErrorCode: InternalError'
+Error while reading single record for table: [products] is [[
+  {
+    "message": "Access denied for products field.",
+    "locations": [
+      {
+        "line": 5,
+        "column": 35
+      }
+    ],
+    "extensions": {
+      "code": "ACCESS_DENIED",
+      "documentation": "https://shopify.dev/api/usage/access-scopes"
+    },
+    "path": [
+      "products"
+    ]
+  }
+]], ErrorCode: InternalError
